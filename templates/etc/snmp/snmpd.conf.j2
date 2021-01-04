@@ -40,3 +40,7 @@ extend {{ snmpd_extension.name }} {{ snmpd_extension.prog }} {{ snmpd_extension.
 {% endfor %}
 
 master agentx
+
+{% for snmpd_additional_line in snmpd_additional_lines | default([]) %}
+{{ snmpd_additional_line }}
+{% endfor %}

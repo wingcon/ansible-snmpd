@@ -37,3 +37,5 @@ snmpd_disks: []
 
 snmpd_default_monitors: true
 snmpd_link_up_down_notifications: true
+
+snmpd_additional_lines: []
