@@ -1,45 +1,38 @@
 # {{ ansible_managed }}
 
 agentAddress {{ snmpd_agent_address | join(',') }}
+master agentx
 
-createUser {{ snmpd_internal_user.username }} {{ snmpd_internal_user.auth_protocol }} "{{ snmpd_internal_user.password }}"
-{% for snmpd_user in snmpd_users %}
-createUser {{ snmpd_user.username }} {{ snmpd_user.auth_protocol }} "{{ snmpd_user.password }}" {{ snmpd_user.privacy_protocol }} "{{ snmpd_user.privacy_passphrase }}"
-{% endfor %}
-
-view systemonly included .1.3.6.1.2.1.1
-view systemonly included .1.3.6.1.2.1.25.1
-
-rouser authOnlyUser
-{% for snmpd_user in snmpd_users %}
-{{ snmpd_user.type }} {{ snmpd_user.username }}
+{% for snmpd_line in snmpd_id_lines | default([]) %}
+{{ snmpd_line }}
 {% endfor %}
 
 sysLocation {{ snmpd_sys_location }}
 sysContact  {{ snmpd_sys_contact }}
-{% if snmpd_sys_description %}
 sysDescr    {{ snmpd_sys_description }}
-{% endif %}
-sysServices {{ snmpd_sys_services }}
+sysName     {{ ansible_hostname }}
+engineID    {{ ansible_hostname }}
 
-iquerySecName {{ snmpd_internal_user.username }}
-rouser        {{ snmpd_internal_user.username }}
+view    system_view     excluded        .iso
+view    system_view     included        SNMPv2-MIB::system
 
-{% if snmpd_disks_include_all %}
-includeAllDisks {{ snmpd_disks_include_all_threshold_minpercent }}
-{% endif %}
-{% for snmpd_disk in snmpd_disks %}
-disk {{ snmpd_disk.path }} {{ snmpd_disk.threshold }}
+view    all             excluded        .iso
+view    all             included        SNMPv2-MIB::system
+view    all             included        .1.3.6.1.6.3.10
+view    all             included        .1.3.6.1.4.1.20470.1.1
+
+{% for user in snmpd_ro_users %}
+rocommunity {{ user }} default -V system_view
 {% endfor %}
 
-defaultMonitors         {{ 'yes' if snmpd_default_monitors else 'no' }}
-linkUpDownNotifications {{ 'yes' if snmpd_link_up_down_notifications else 'no' }}
-
-{% for snmpd_extension in snmpd_extensions | default([]) %}
-extend {{ snmpd_extension.name }} {{ snmpd_extension.prog }} {{ snmpd_extension.args | default([]) | join(' ') }}
+{% for user in snmpd_rw_users %}
+rwcommunity {{ user }} default -V all
 {% endfor %}
 
-master agentx
+{% for user in snmpd_v3_users %}
+createUser {{ user.username }} {{ user.auth_algo }} {{ user.passphrase }} {{ user.priv_algo }} {{ user.passphrase }}
+rwuser {{ user.username }} {{ user.mode }} -V all
+{% endfor %}
 
 {% for snmpd_additional_line in snmpd_additional_lines | default([]) %}
 {{ snmpd_additional_line }}

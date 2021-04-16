@@ -10,6 +10,7 @@
     - configuration
     - snmpd
     - snmpd-dependencies
+  when: not snmpd_skip_installation
 
 - name: install
   apt:
@@ -19,6 +20,7 @@
     - configuration
     - snmpd
     - snmpd-install
+  when: not snmpd_skip_installation
 
 - name: update configuration file - /etc/default/snmpd.conf
   template:

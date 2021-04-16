@@ -5,6 +5,11 @@
 
 Set up snmp(d) in Debian-like systems.
 
+#### This is a fork!
+
+The original role is forked from Oefenweb/ansible-snmpd.
+Since we did too many changes to this role there is no realistic chance of a merge this will most likely stay that way.
+
 #### Requirements
 
 
@@ -65,7 +70,7 @@ None
 
 MIT
 
-#### Author Information
+#### Original Author Information
 
 Mischa ter Smitten
 
