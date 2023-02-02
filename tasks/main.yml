@@ -22,6 +22,16 @@
     - snmpd-install
   when: not snmpd_skip_installation
 
+# we should stop the service in case users get edited
+- name: stop snmpd service
+  service:
+    name: snmpd
+    state: stopped
+  tags:
+    - configuration
+    - snmpd
+    - snmpd-configuration
+
 - name: update configuration file - /etc/default/snmpd.conf
   template:
     src: etc/default/snmpd.j2

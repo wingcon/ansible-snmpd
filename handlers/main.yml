@@ -1,6 +1,14 @@
 # handlers file for snmpd
 ---
-- name: restart snmpd
+# removal of db file is the most simple way to update users
+- name: remove db file
+  listen: restart snmpd
+  file:
+    path: /var/lib/snmp/snmpd.conf
+    state: absent
+
+- name: restart snmpd service
+  listen: restart snmpd
   service:
     name: snmpd
     state: restarted
