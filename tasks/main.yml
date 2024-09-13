@@ -58,6 +58,9 @@
     - snmpd
     - snmpd-configuration
 
+- name: Flush handlers
+  meta: flush_handlers
+
 - name: start and enable service
   service:
     name: snmpd
